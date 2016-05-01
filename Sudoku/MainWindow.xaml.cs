@@ -40,10 +40,11 @@ namespace Sudoku
             for (int i = 0; i < 9; i++)
                 for (int j = 0; j < 9; j++)
                 {
+
                     var border = new Border
                     {
                         BorderBrush = Brushes.Black,
-                        BorderThickness = new Thickness(.5)
+                        BorderThickness = GetThickness(i, j, 0.1, 0.3)
                     };
                     sudokuTextBlocks[i, j] = new TextBlock
                     {
@@ -52,10 +53,19 @@ namespace Sudoku
                         HorizontalAlignment = HorizontalAlignment.Center
                     };
                     border.Child = sudokuTextBlocks[i, j];
-                    Grid.SetColumn(border, i);
-                    Grid.SetRow(border, j);
+                    Grid.SetRow(border, i);
+                    Grid.SetColumn(border, j);
                     SudokuGrid.Children.Add(border);
                 }
+        }
+
+        private Thickness GetThickness(int i, int j, double thin, double thick)
+        {
+            var top = i % 3 == 0 ? thick : thin;
+            var bottom = i % 3 == 2 ? thick : thin;
+            var left = j % 3 == 0 ? thick : thin;
+            var right = j % 3 == 2 ? thick : thin;
+            return new Thickness(left, top, right, bottom);
         }
     }
 }
