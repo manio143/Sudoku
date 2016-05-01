@@ -11,22 +11,22 @@ namespace Sudoku
         private long moves;
         private TimeSpan time;
 
-        private int[,] board;
-        private int[,] solution;
+        private int?[][] board;
+        private int[][] solution;
 
         public long Moves => moves;
         public TimeSpan Time => time;
 
-        public int[,] Board => board;
-        public int[,] Solution => solution;
+        public int?[][] Board => board;
+        public int[][] Solution => solution;
 
         public SudokuViewModel()
         {
             time = new TimeSpan();
-            board = new int[9, 9];
+            board = new int?[9][];
         }
 
-        private static Random random = new Random();
+        private static readonly Random random = new Random();
         public void GenerateSudoku(SudokuLevel level)
         {
             GenerateSolution();
@@ -40,77 +40,105 @@ namespace Sudoku
         /// <param name="level"></param>
         private void SetupBoard(SudokuLevel level)
         {
-            board = (int[,])solution.Clone();
+            for (int i = 0; i < 9; i++)
+            {
+                board[i] = new int?[9];
+                for (int j = 0; j < 9; j++)
+                    board[i][j] = solution[i][j];
+            }
+
             int remainingItems = ((int)level + 1) * 20;
             while (remainingItems > 0)
             {
                 int posX = random.Next(9);
                 int posY = random.Next(9);
-                if (board[posX, posY] == 0)
+                if (board[posX][posY] == null)
                     continue;
-                board[posX, posY] = 0;
+                board[posX][posY] = null;
                 remainingItems--;
             }
         }
 
+        readonly int[] numbers = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
         private void GenerateSolution()
         {
-            solution = new int[9, 9];
-            var availableNumbers = new List<int>[9 * 9];
+            solution = new int[9][];
+            var availableNumbers = new List<int>[9];
 
-            int currentIndex = 0;
-
-            int[] numbers = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
             for (int x = 0; x < availableNumbers.Length; x++)
                 availableNumbers[x] = new List<int>(numbers);
 
-            while (currentIndex < solution.Length)
+            solution[0] = numbers.Shuffle();
+            for (int i = 0; i < 9; i++)
+                availableNumbers[i].Remove(solution[0][i]);
+
+            int row = 1;
+            int rowTries = 0;
+
+            while (row < 9)
             {
-                if (availableNumbers[currentIndex].Count > 0)
+                var rowAvailableNumbers = new List<int>(numbers.Shuffle());
+                int[] currentRow = new int[9];
+                List<int>[] used = new List<int>[9];
+                for (var i = 0; i < used.Length; i++)
+                    used[i] = new List<int>(2);
+                int pos = 0;
+                while (pos < 9)
                 {
-                    int randomIndex = random.Next(availableNumbers[currentIndex].Count);
-                    int randomAvailableNumber = availableNumbers[currentIndex][randomIndex];
-                    if (!Conflicts(randomAvailableNumber, currentIndex))
+                    int num = rowAvailableNumbers.FirstOrDefault(
+                        x => availableNumbers[pos].Contains(x) && !used[pos].Contains(x));
+                    if (num != 0)
                     {
-                        solution[currentIndex / 9, currentIndex % 9] = randomAvailableNumber;
-                        currentIndex++;
+                        currentRow[pos] = num;
+                        used[pos].Add(num);
+                        rowAvailableNumbers.Remove(num);
+                        pos++;
                     }
-                    availableNumbers[currentIndex].RemoveAt(randomIndex);
+                    else
+                    {
+                        used[pos].Clear();
+                        pos--;
+                        rowAvailableNumbers.Add(currentRow[pos]);
+                        currentRow[pos] = 0;
+                    }
                 }
-                else
-                {
-                    availableNumbers[currentIndex].AddRange(numbers);
-                    currentIndex--;
-                    solution[currentIndex / 9, currentIndex % 9] = 0;
-                }
+                solution[row] = currentRow;
+                for (int i = 0; i < 9; i++)
+                    availableNumbers[i].Remove(solution[row][i]);
+                row++;
+                if (row % 3 == 0)
+                    if (!BoxCheck(row / 3 - 1))
+                    {
+                        row--;
+                        for (int i = 0; i < solution[row].Length; i++)
+                            availableNumbers[i].Add(solution[row][i]);
+                        rowTries++;
+                        if (rowTries > 9)
+                        {
+                            row--;
+                            for (int i = 0; i < solution[row].Length; i++)
+                                availableNumbers[i].Add(solution[row][i]);
+                            rowTries = 0;
+                        }
+                    }
+                    else
+                        rowTries = 0;
             }
         }
 
-        private bool Conflicts(int number, int currentIndex)
+        private bool BoxCheck(int i)
         {
-            int i = currentIndex / 9;
-            int j = currentIndex % 9;
-            for (int ii = 0; ii < i; ii++)
-                if (solution[ii, j] == number)
-                    return true;
-            for (int jj = 0; jj < j; jj++)
-                if (solution[i, jj] == number)
-                    return true;
-            foreach (var pair in GetNeighbours(i, j))
-                if (solution[pair.Item1, pair.Item2] == number)
-                    return true;
-            return false;
-        }
-
-        private IEnumerable<Tuple<int, int>> GetNeighbours(int i, int j)
-        {
-            int col = i / 3;
-            int row = j / 3;
-            var positions = new Tuple<int, int>[9];
-            for (int x = 0; x < 3; x++)
-                for (int y = 0; y < 3; y++)
-                    positions[x * 3 + y] = new Tuple<int, int>(col * 3 + x, row * 3 + y);
-            return positions;
+            for (int j = 0; j < 3; j++)
+            {
+                var freeNumbers = new List<int>(numbers);
+                for (int x = 0; x < 3; x++)
+                    for (int y = 0; y < 3; y++)
+                        freeNumbers.Remove(solution[i * 3 + x][j * 3 + y]);
+                if (freeNumbers.Count > 0)
+                    return false;
+            }
+            return true;
         }
     }
 }

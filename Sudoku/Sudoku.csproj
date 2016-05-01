@@ -63,6 +63,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Randomizer.cs" />
     <Compile Include="SudokuLevel.cs" />
     <Compile Include="SudokuViewModel.cs" />
     <Page Include="MainWindow.xaml">

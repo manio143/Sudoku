@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 
 namespace Sudoku
@@ -10,7 +11,7 @@ namespace Sudoku
         private SudokuViewModel sudoku;
         private SudokuLevel currentLevel;
         private TextBlock[,] sudokuTextBlocks;
-        
+
         public MainWindow()
         {
             InitializeComponent();
@@ -21,13 +22,15 @@ namespace Sudoku
         {
             sudoku = new SudokuViewModel();
             sudoku.GenerateSudoku(currentLevel);
-            //...
+            for (int i = 0; i < 9; i++)
+                for (int j = 0; j < 9; j++)
+                    sudokuTextBlocks[i, j].SetBinding(TextBlock.TextProperty, new Binding($"Board[{i}][{j}]"));
             DataContext = sudoku;
         }
 
         private void DifficultySlider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            currentLevel = (SudokuLevel) e.NewValue;
+            currentLevel = (SudokuLevel)e.NewValue;
             DifficultyTextBlock.Text = currentLevel.ToString().ToUpper();
         }
 
@@ -42,7 +45,12 @@ namespace Sudoku
                         BorderBrush = Brushes.Black,
                         BorderThickness = new Thickness(.5)
                     };
-                    sudokuTextBlocks[i, j] = new TextBlock();
+                    sudokuTextBlocks[i, j] = new TextBlock
+                    {
+                        FontSize = 5,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        HorizontalAlignment = HorizontalAlignment.Center
+                    };
                     border.Child = sudokuTextBlocks[i, j];
                     Grid.SetColumn(border, i);
                     Grid.SetRow(border, j);
