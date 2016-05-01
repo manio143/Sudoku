@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Sudoku"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
         mc:Ignorable="d"
-        Title="Sudoku" Height="480" Width="720">
+        Title="Sudoku" Height="480" Width="600">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -18,7 +18,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
-            <ColumnDefinition Width="50"/>
+            <ColumnDefinition Width="20"/>
             <!--Margin-->
             <ColumnDefinition Width="150"></ColumnDefinition>
         </Grid.ColumnDefinitions>
@@ -26,6 +26,33 @@
             <RowDefinition />
             <RowDefinition Height="30"></RowDefinition>
         </Grid.RowDefinitions>
+
+        <Viewbox Grid.Column="0" Grid.Row="0" Stretch="Uniform">
+            <Grid x:Name="SudokuGrid" Width="100" Height="100">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+            </Grid>
+        </Viewbox>
 
         <StackPanel Grid.Column="2" Grid.Row="0" VerticalAlignment="Top" Margin="10, 20">
             <Button Content="New Game" Margin="10" Click="NewGame"></Button>
