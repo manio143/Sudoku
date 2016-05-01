@@ -1,0 +1,82 @@
+﻿<controls:MetroWindow x:Class="Sudoku.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Sudoku"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        mc:Ignorable="d"
+        Title="Sudoku" Height="480" Width="720">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/Icons.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="50"/>
+            <!--Margin-->
+            <ColumnDefinition Width="150"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="30"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Column="2" Grid.Row="0" VerticalAlignment="Top" Margin="10, 20">
+            <Button Content="New Game" Margin="10" Click="NewGame"></Button>
+            <TextBlock x:Name="DifficultyTextBlock" Text="DIFFICULTY" HorizontalAlignment="Center" FontFamily="Segoe UI" FontWeight="Bold"/>
+            <Slider x:Name="DifficultySlider" TickPlacement="TopLeft" IsSnapToTickEnabled="True" Maximum="2" TickFrequency="1" ValueChanged="DifficultySlider_OnValueChanged"></Slider>
+            <Button Content="Check" Margin="10"></Button>
+            <Button Content="Hint" Margin="10" IsEnabled="False"></Button>
+        </StackPanel>
+        <StackPanel Grid.Column="2" Grid.Row="0" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="10, 20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <Rectangle Grid.Row="0" Grid.Column="0" Width="25" Height="25" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource appbar_save}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+                <controls:ToggleSwitch Grid.Row="0" Grid.Column="1" x:Name="SaveSwitch" ContentDirection="RightToLeft"></controls:ToggleSwitch>
+
+                <Rectangle Grid.Row="1" Grid.Column="0" Width="25" Height="27" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource appbar_timer}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+                <controls:ToggleSwitch Grid.Row="1" Grid.Column="1" x:Name="TimerSwitch" ContentDirection="RightToLeft"></controls:ToggleSwitch>
+            </Grid>
+        </StackPanel>
+
+        <StatusBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" FontFamily="Segoe UI" FontWeight="Bold">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="100" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Text="Moves:  " />
+                    <TextBlock Text="{Binding Moves}" />
+                </StackPanel>
+                
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Text="Time:  " />
+                    <TextBlock Text="{Binding Time}" />
+                </StackPanel>
+            </Grid>
+        </StatusBar>
+    </Grid>
+</controls:MetroWindow>
